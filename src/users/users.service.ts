@@ -14,6 +14,12 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  findOne(email: string): Promise<UserEntity> {
+    return this.usersRepository.findOne({
+      where: { email }
+    });
+  }
+
   save(user: UserEntity): Promise<UserEntity> {
     return this.usersRepository.save(user);
   }

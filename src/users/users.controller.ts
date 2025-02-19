@@ -13,7 +13,6 @@ export class UsersController {
 
   @Post()
   save(@Body() user: UserEntity): Promise<UserEntity> {
-    console.log(user)
     return this.usersService.save(user);
   }
 
