@@ -1,5 +1,5 @@
 
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentEntity } from './entities/comment.entity';
 import { Repository } from 'typeorm';
@@ -13,14 +13,14 @@ export class CommentsService {
 
   findAll(): Promise<CommentEntity[]> {
     return this.commentsRepository.find({
-      relations: ["user_id", "post_id"]
+      relations: ["user_id", "post_id", "post_id.user_id"]
     });
   }
 
   findOne(id: number): Promise<CommentEntity> {
     return this.commentsRepository.findOne({
       where: { id },
-      relations: ["user_id", "post_id"]
+      relations: ["user_id", "post_id", "post_id.user_id"]
     });
   }
 
@@ -28,12 +28,24 @@ export class CommentsService {
     return this.commentsRepository.save(comment);
   }
 
-  remove(id: number) {
-    return this.commentsRepository.delete(id);
+  async remove(id: number, user_id: number) {
+    const current_comment = await this.findOne(id)
+    
+    if((current_comment?.user_id?.id == user_id) || (current_comment?.post_id.user_id?.id == user_id))
+      return this.commentsRepository.delete(id);
+    else
+      throw new HttpException('Você não tem permissão ou este Comentário não existe', HttpStatus.NOT_FOUND);
   }
 
-  updateDescription(id: number, comment: CommentEntity): Promise<CommentEntity> {
-    this.commentsRepository.update(id, comment);
-    return this.findOne(id)
+  async updateDescription(id: number, comment: CommentEntity, user_id: number): Promise<CommentEntity> {
+    const current_comment = await this.findOne(id)
+    
+    if(current_comment?.user_id?.id == user_id)
+    {
+      this.commentsRepository.update(id, comment);
+      return this.findOne(id)
+    }
+    else
+      throw new HttpException('Você não tem permissão ou este Comentário não existe', HttpStatus.NOT_FOUND);
   }
 }

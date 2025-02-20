@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostEntity } from './entities/post.entity';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('/posts')
@@ -28,13 +27,31 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<DeleteResult> {
-    return this.postsService.remove(id);
+  remove(@Param('id') id: number, @Request() req): Promise<HttpStatus> {
+    return this.postsService.remove(id, req.user.sub);
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  updateDescription(@Param('id') id: number, @Body() post: PostEntity): Promise<PostEntity> {
-    return this.postsService.updateDescription(id, post);
+  updateDescription(@Param('id') id: number, @Request() req, @Body() post: PostEntity): Promise<PostEntity> {
+    return this.postsService.updateDescription(id, post, req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('like/:id')
+  like(@Param('id') id: number, @Request() req): Promise<PostEntity> {
+    return this.postsService.like(id, req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('dislike/:id')
+  dislike(@Param('id') id: number, @Request() req): Promise<PostEntity> {
+    return this.postsService.dislike(id, req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('viewed/:id')
+  viewed(@Param('id') id: number): Promise<PostEntity> {
+    return this.postsService.viewed(id);
   }
 }
