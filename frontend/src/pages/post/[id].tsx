@@ -9,40 +9,37 @@ import { useRouter as useRouterNavigation } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const PostPage = () => {
-  const router = useRouter()
-  const routerNav = useRouterNavigation()
-  const { id } = router.query
-  const [post, setPost] = useState<Post>({})
-  const { bearerToken } = useBookForumStore()  
+  const router = useRouter();
+  const routerNav = useRouterNavigation();
+  const { id } = router.query;
+  const [post, setPost] = useState<Post>({});
+  const { bearerToken } = useBookForumStore();
 
   const getPost = async () => {
-    if (!bearerToken) return
-    const response = await api(bearerToken).get(`posts/${id}`)
+    if (!bearerToken) return;
+    const response = await api(bearerToken).get(`posts/${id}`);
 
-    if (response.status == 200)
-      setPost(response.data)
-  }
+    if (response.status == 200) setPost(response.data);
+  };
 
   const SessionCheck = () => {
-    const token = localStorage.getItem("book-forum-storage")
+    const token = localStorage.getItem("book-forum-storage");
     const user = JSON.parse(String(token));
-    
-    if(!user?.state?.bearerToken)
-      routerNav.push('/login')
-  }
 
-  useEffect(() => {    
-    SessionCheck()
+    if (!user?.state?.bearerToken) routerNav.push("/login");
+  };
 
-    const patchPostViewed = async () => {      
-      if (!bearerToken) return
-      if (id)
-        await api(bearerToken).patch(`posts/viewed/${id}`)
-    }
+  useEffect(() => {
+    SessionCheck();
 
-    patchPostViewed()
-    getPost()            
-  }, [bearerToken, id, router])
+    const patchPostViewed = async () => {
+      if (!bearerToken) return;
+      if (id) await api(bearerToken).patch(`posts/viewed/${id}`);
+    };
+
+    patchPostViewed();
+    getPost();
+  }, [bearerToken, id, router]);
 
   return (
     <>
@@ -53,6 +50,6 @@ const PostPage = () => {
       </Layout>
     </>
   );
-}
+};
 
-export default PostPage
+export default PostPage;

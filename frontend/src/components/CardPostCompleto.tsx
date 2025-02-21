@@ -7,36 +7,21 @@ import {
   Button,
   Center,
   FormControl,
-  FormHelperText,
-  FormLabel,
   HStack,
   Image,
-  Input,
   Spacer,
   Text,
   Textarea,
   Tooltip,
-  useBoolean,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  FaEdit,
-  FaHeart,
-  FaHeartBroken,
-  FaRegEye,
-  FaTrashAlt,
-} from "react-icons/fa";
+import { FaEdit, FaRegEye, FaTrashAlt } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import ModalComentario from "@/components/ModalComentario";
 import ModalPost from "./ModalPost";
-import {
-  MdKeyboardDoubleArrowDown,
-  MdOutlineKeyboardDoubleArrowDown,
-} from "react-icons/md";
-import { TiArrowSortedDown } from "react-icons/ti";
 import { ImArrowDown, ImArrowUp } from "react-icons/im";
 import { ConfirmationDialog } from "./ConfirmationDialog";
 
@@ -192,7 +177,7 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                       <Tooltip label="Deletar post" placement="top" hasArrow>
                         <Button
                           onClick={() => {
-                            deletePostDisclosue.onOpen()
+                            deletePostDisclosue.onOpen();
                           }}
                           variant={"ghost"}
                           colorScheme="red"
@@ -280,8 +265,8 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                           >
                             <Button
                               onClick={() => {
-                                setToRemoveComment(Number(comentario?.id))
-                                removeCommentDisclosue.onOpen()
+                                setToRemoveComment(Number(comentario?.id));
+                                removeCommentDisclosue.onOpen();
                               }}
                               variant={"ghost"}
                               colorScheme="red"
@@ -322,15 +307,19 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
       <ConfirmationDialog
         title="Essa é uma ação sem volta"
         description="Você tem certeza que quer deletar este Post?"
-        onYes={() => { removePost() }}
+        onYes={() => {
+          removePost();
+        }}
         onCancel={() => {}}
         alertDialogProps={deletePostDisclosue}
       />
 
-<ConfirmationDialog
+      <ConfirmationDialog
         title="Essa é uma ação sem volta"
         description="Você tem certeza que quer remover este Comentário?"
-        onYes={() => { removeComment(toRemoveComment) }}
+        onYes={() => {
+          removeComment(toRemoveComment);
+        }}
         onCancel={() => {}}
         alertDialogProps={removeCommentDisclosue}
       />

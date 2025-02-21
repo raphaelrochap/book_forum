@@ -1,11 +1,10 @@
 import { Post } from "@/types/entities";
-import { Box, Center, HStack, Spacer, Text, useDisclosure, VStack } from "@chakra-ui/react";
-import { FaHeart, FaHeartBroken, FaRegEye } from "react-icons/fa";
-import ModalPost from "./ModalPost";
+import { Box, Center, HStack, Spacer, Text, VStack } from "@chakra-ui/react";
+import { FaRegEye } from "react-icons/fa";
 import { ImArrowDown, ImArrowUp } from "react-icons/im";
 
 interface CardResumoPostProps {
-  post: Post
+  post: Post;
 }
 
 const CardResumoPost = ({ post }: CardResumoPostProps) => {
@@ -35,22 +34,22 @@ const CardResumoPost = ({ post }: CardResumoPostProps) => {
                     Por: {post.user_id?.name}
                   </Text>
                   <Spacer />
-                  <HStack pr='5px'>
+                  <HStack pr="5px">
                     <FaRegEye />
                     <Text whiteSpace={"nowrap"} fontSize={"xs"}>
-                    {post.views}
+                      {post.views}
                     </Text>
                   </HStack>
-                  <HStack pr='5px'>
+                  <HStack pr="5px">
                     <ImArrowUp />
                     <Text whiteSpace={"nowrap"} fontSize={"xs"} pr={0}>
                       {post.likes}
-                    </Text>                    
+                    </Text>
                   </HStack>
-                  <HStack pr='5px'>
+                  <HStack pr="5px">
                     <ImArrowDown />
                     <Text whiteSpace={"nowrap"} fontSize={"xs"}>
-                    {post.dislikes}
+                      {post.dislikes}
                     </Text>
                   </HStack>
                 </HStack>

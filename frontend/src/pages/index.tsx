@@ -10,54 +10,56 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Home = () => {
-  const [posts, setPosts] = useState<Post[]>([])
-  const router = useRouter()
-  const modalPostDisclosure = useDisclosure()
-  const { bearerToken } = useBookForumStore()
+  const [posts, setPosts] = useState<Post[]>([]);
+  const router = useRouter();
+  const modalPostDisclosure = useDisclosure();
+  const { bearerToken } = useBookForumStore();
 
   const SessionCheck = () => {
-    const token = localStorage.getItem("book-forum-storage")
+    const token = localStorage.getItem("book-forum-storage");
     const user = JSON.parse(String(token));
-    
-    if(!user?.state?.bearerToken)
-      router.push('/login')
-  }
 
-  const getPosts = async () => {    
-    if (!bearerToken) return
-    const response = await api(bearerToken).get('/posts')
+    if (!user?.state?.bearerToken) router.push("/login");
+  };
 
-    if (response.status == 200)
-      setPosts(response.data)
-  }
+  const getPosts = async () => {
+    if (!bearerToken) return;
+    const response = await api(bearerToken).get("/posts");
 
-  useEffect(() => {  
-    SessionCheck()
-    getPosts()
-  }, [bearerToken, router])
+    if (response.status == 200) setPosts(response.data);
+  };
+
+  useEffect(() => {
+    SessionCheck();
+    getPosts();
+  }, [bearerToken, router]);
 
   return (
     <>
       <Layout>
-        <Center mt='30px'>
-            <VStack>
-              <Center mb='30px'>
-                <Button colorScheme="blue" onClick={modalPostDisclosure.onOpen}>Criar Publicação</Button>
-              </Center>
-              {posts.map((post) =>
-              (
-                <Link key={post.id} href={`/post/${post.id}`}>
-                  <CardResumoPost post={post} />
-                </Link>
-              )
-            )}
-            </VStack>
+        <Center mt="30px">
+          <VStack>
+            <Center mb="30px">
+              <Button colorScheme="blue" onClick={modalPostDisclosure.onOpen}>
+                Criar Publicação
+              </Button>
+            </Center>
+            {posts.map((post) => (
+              <Link key={post.id} href={`/post/${post.id}`}>
+                <CardResumoPost post={post} />
+              </Link>
+            ))}
+          </VStack>
         </Center>
       </Layout>
 
-      <ModalPost disclosureProps={modalPostDisclosure} refresh={getPosts} insert/>
+      <ModalPost
+        disclosureProps={modalPostDisclosure}
+        refresh={getPosts}
+        insert
+      />
     </>
   );
-}
+};
 
-export default Home
+export default Home;
