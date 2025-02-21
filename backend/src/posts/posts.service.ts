@@ -3,12 +3,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './entities/post.entity';
 import { Repository } from 'typeorm';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PostsService {
   constructor(
       @InjectRepository(PostEntity)
-      private postsRepository: Repository<PostEntity>
+      private postsRepository: Repository<PostEntity>,
+      private userService: UsersService
   ) {}
 
   findAll(): Promise<PostEntity[]> {
@@ -24,7 +26,16 @@ export class PostsService {
     });
   }
 
-  save(post: PostEntity): Promise<PostEntity> {
+  findOneById(id: number): Promise<PostEntity> {
+    return this.postsRepository.findOne({
+      where: { id },
+      relations: ["user_id"]
+    });
+  }
+
+  async save(post: PostEntity, user_id: number): Promise<PostEntity> {
+    const user = await this.userService.findOneById(user_id)
+    post.user_id = user
     return this.postsRepository.save(post);
   }
 

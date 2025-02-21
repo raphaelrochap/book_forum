@@ -20,6 +20,12 @@ export class UsersService {
     });
   }
 
+  findOneById(id: number): Promise<UserEntity> {
+    return this.usersRepository.findOne({
+      where: { id }
+    });
+  }
+
   save(user: UserEntity): Promise<UserEntity> {
     return this.usersRepository.save(user);
   }

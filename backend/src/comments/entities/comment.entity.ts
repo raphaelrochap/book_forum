@@ -17,4 +17,7 @@ export class CommentEntity {
 
     @Column({ type: 'text', nullable: false })
     description: string;    
+
+    @Column({ type: 'boolean', nullable: true, default: false })
+    removed: boolean;
 }

@@ -21,8 +21,8 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  save(@Body() post: PostEntity): Promise<PostEntity> {
-    return this.postsService.save(post);
+  save(@Body() post: PostEntity, @Request() req): Promise<PostEntity> {
+    return this.postsService.save(post, req.user.sub);
   }
 
   @UseGuards(AuthGuard)

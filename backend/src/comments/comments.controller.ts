@@ -20,6 +20,12 @@ export class CommentsController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('byPostId/:id')
+  findAllByPostId(@Param('id') id: number): Promise<CommentEntity[]> {
+    return this.commentsService.findAllByPostId(id);
+  }
+
+  @UseGuards(AuthGuard)
   @Post()
   save(@Body() comment: CommentEntity): Promise<CommentEntity> {
     return this.commentsService.save(comment);

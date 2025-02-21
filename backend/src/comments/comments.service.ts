@@ -24,6 +24,11 @@ export class CommentsService {
     });
   }
 
+  async findAllByPostId(id: number): Promise<CommentEntity[]> {
+    const comments: CommentEntity[] = await this.findAll();
+    return comments.filter((comment) => (comment.post_id.id == id))
+  }
+
   save(comment: CommentEntity): Promise<CommentEntity> {
     return this.commentsRepository.save(comment);
   }
@@ -31,8 +36,11 @@ export class CommentsService {
   async remove(id: number, user_id: number) {
     const current_comment = await this.findOne(id)
     
-    if((current_comment?.user_id?.id == user_id) || (current_comment?.post_id.user_id?.id == user_id))
-      return this.commentsRepository.delete(id);
+    if((current_comment?.user_id?.id == user_id) || (current_comment?.post_id.user_id?.id == user_id)){
+      current_comment.removed = true
+      current_comment.description = ''
+      return this.commentsRepository.update(current_comment.id, current_comment);
+    }
     else
       throw new HttpException('Você não tem permissão ou este Comentário não existe', HttpStatus.NOT_FOUND);
   }

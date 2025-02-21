@@ -1,5 +1,5 @@
 {
-  "name": "book_forum",
+  "name": "book_forum_back",
   "private": true,
   "version": "1.0.0",
   "description": "Book Forum é uma rede social bem simples, que permite criar publicações e interagir comentando.",
