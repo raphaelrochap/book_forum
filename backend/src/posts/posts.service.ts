@@ -80,6 +80,11 @@ export class PostsService {
       post.likes++;
       this.postsRepository.update(post_id, post);
     }
+    else {
+      post.liked_by = post.liked_by.filter((value) => value != user_id)
+      post.likes--;
+      this.postsRepository.update(post_id, post);
+    }
     return post
   }
 
@@ -97,7 +102,13 @@ export class PostsService {
       post.disliked_by.push(user_id)
       post.dislikes++;
       this.postsRepository.update(post_id, post);
-    }    
+    }
+    else {
+      post.disliked_by = post.disliked_by.filter((value) => value != user_id)
+      post.dislikes--;
+      this.postsRepository.update(post_id, post);
+    }
+    
     return post
   }
 

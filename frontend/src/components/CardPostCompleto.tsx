@@ -31,6 +31,9 @@ import {
 import { IoSend } from "react-icons/io5";
 import ModalComentario from "@/components/ModalComentario";
 import ModalPost from "./ModalPost";
+import { MdKeyboardDoubleArrowDown, MdOutlineKeyboardDoubleArrowDown } from "react-icons/md";
+import { TiArrowSortedDown } from "react-icons/ti";
+import { ImArrowDown, ImArrowUp } from "react-icons/im";
 
 interface CardPostCompletoProps {
   post: Post;
@@ -83,7 +86,7 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
   };
 
   const getLikedVotedColor = (): string => {
-    if (post.liked_by?.find((id) => id === user?.id)) return "red";
+    if (post.liked_by?.find((id) => id === user?.id)) return "green";
     return "";
   };
 
@@ -150,7 +153,7 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                     <Spacer />
                     <Button onClick={PatchLike}>
                       <HStack pr="5px">
-                        <FaHeart color={getLikedVotedColor()} />
+                        <ImArrowUp color={getLikedVotedColor()} />
                         <Text whiteSpace={"nowrap"} fontSize={"xs"} pr={0}>
                           {post.likes}
                         </Text>
@@ -158,7 +161,7 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                     </Button>
                     <Button onClick={PatchDislike}>
                       <HStack pr="5px">
-                        <FaHeartBroken color={getDislikedVotedColor()} />
+                        <ImArrowDown color={getDislikedVotedColor()} />
                         <Text whiteSpace={"nowrap"} fontSize={"xs"}>
                           {post.dislikes}
                         </Text>

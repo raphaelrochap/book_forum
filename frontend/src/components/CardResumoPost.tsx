@@ -2,6 +2,7 @@ import { Post } from "@/types/entities";
 import { Box, Center, HStack, Spacer, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { FaHeart, FaHeartBroken, FaRegEye } from "react-icons/fa";
 import ModalPost from "./ModalPost";
+import { ImArrowDown, ImArrowUp } from "react-icons/im";
 
 interface CardResumoPostProps {
   post: Post
@@ -41,13 +42,13 @@ const CardResumoPost = ({ post }: CardResumoPostProps) => {
                     </Text>
                   </HStack>
                   <HStack pr='5px'>
-                    <FaHeart />
+                    <ImArrowUp />
                     <Text whiteSpace={"nowrap"} fontSize={"xs"} pr={0}>
                       {post.likes}
                     </Text>                    
                   </HStack>
                   <HStack pr='5px'>
-                    <FaHeartBroken />
+                    <ImArrowDown />
                     <Text whiteSpace={"nowrap"} fontSize={"xs"}>
                     {post.dislikes}
                     </Text>
