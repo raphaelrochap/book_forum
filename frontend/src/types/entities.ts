@@ -23,6 +23,6 @@ export type Comment = {
     id?: number;
     user_id?: User | number;
     post_id?: Post | number;
-    description?: string;    
+    description: string;    
     removed?: boolean;
 }

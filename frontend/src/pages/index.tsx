@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 const Home = () => {
   const [posts, setPosts] = useState<Post[]>([])
   const router = useRouter()
-  const modalBackupDisclosue = useDisclosure();
+  const modalPostDisclosure = useDisclosure();
   const { bearerToken } = useBookForumStore()
 
   const SessionCheck = () => {
@@ -42,7 +42,7 @@ const Home = () => {
         <Center mt='30px'>
             <VStack>
               <Center mb='30px'>
-                <Button colorScheme="blue" onClick={modalBackupDisclosue.onOpen}>Criar Publicação</Button>
+                <Button colorScheme="blue" onClick={modalPostDisclosure.onOpen}>Criar Publicação</Button>
               </Center>
               {posts.map((post) =>
               (
@@ -55,7 +55,7 @@ const Home = () => {
         </Center>
       </Layout>
 
-      <ModalPost disclosureProps={modalBackupDisclosue} refresh={getPosts} />
+      <ModalPost disclosureProps={modalPostDisclosure} refresh={getPosts} />
     </>
   );
 }

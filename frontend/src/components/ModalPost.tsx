@@ -22,12 +22,12 @@ import {
 import { desc } from "framer-motion/client"
 import { FormEvent, useState } from "react"
   
-  interface ModalRealizaBackupProps {
+  interface ModalPostProps {
     disclosureProps: UseDisclosureProps
     refresh: () => void
   }
   
-  const ModalPost = ({ disclosureProps, refresh }: ModalRealizaBackupProps) => {  
+  const ModalPost = ({ disclosureProps, refresh }: ModalPostProps) => {  
     const [title, setTitle] = useState<string>('')
     const [description, setDescription] = useState<string>('')
     const { bearerToken } = useBookForumStore()

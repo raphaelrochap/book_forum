@@ -15,12 +15,14 @@ import {
   Text,
   Textarea,
   Tooltip,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaHeart, FaHeartBroken, FaRegEye, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaHeart, FaHeartBroken, FaRegEye, FaTrashAlt } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
+import ModalComentario from "@/components/ModalComentario";
 
 interface CardPostCompletoProps {
   post: Post;
@@ -31,16 +33,18 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
   const router = useRouter()
   const [comentarios, setComentarios] = useState<Comment[]>([]);
   const [description, setDescription] = useState<string>('');
+  const [comment, setComment] = useState<Comment>({ description: '' });
   const { bearerToken, user } = useBookForumStore()
+  const modalEditComentarioDisclosure = useDisclosure();
   
   const PostComment = async () => {
-    const comment: Comment = {
+    const newComment: Comment = {
       user_id: user?.id,
       post_id: post.id,
       description
     }
     if (!bearerToken) return
-    await api(bearerToken).post('comments', comment);
+    await api(bearerToken).post('comments', newComment);
     setDescription('')
     refresh()
   };
@@ -80,14 +84,14 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
     return "";
   };
 
-  useEffect(() => {
-    const getComentarios = async () => {
-      if (!bearerToken) return
-      const response = await api(bearerToken).get(`/comments/byPostId/${post.id}`);
-  
-      if (response.status == 200) setComentarios(response.data);
-    }
+  const getComentarios = async () => {
+    if (!bearerToken) return
+    const response = await api(bearerToken).get(`/comments/byPostId/${post.id}`);
 
+    if (response.status == 200) setComentarios(response.data);
+  }
+
+  useEffect(() => {
     getComentarios();
   }, [post, bearerToken]);
 
@@ -181,6 +185,18 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                       <Text>{comentario.description}</Text>
                       <Spacer />
                       {((user?.id == commentUser.id) || (post?.user_id?.id == user?.id)) &&
+                        <Tooltip label='Editar comentário' placement="top" hasArrow>                      
+                          <Button onClick={() => {
+                            setComment(comentario)
+                            modalEditComentarioDisclosure.onOpen()
+                          }} variant={'ghost'} colorScheme="red">
+                            <HStack pr="5px">                      
+                              <FaEdit />                        
+                            </HStack>                                              
+                          </Button>
+                        </Tooltip>
+                      }
+                      {((user?.id == commentUser.id) || (post?.user_id?.id == user?.id)) &&
                         <Tooltip label='Excluir comentário' placement="top" hasArrow>                      
                           <Button onClick={() => {removeComment(Number(comentario?.id))}} variant={'ghost'} colorScheme="red">
                             <HStack pr="5px">                      
@@ -201,6 +217,8 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
           </VStack>
         </Box>
       </VStack>
+
+      <ModalComentario disclosureProps={modalEditComentarioDisclosure} refresh={getComentarios} comment={comment}/>
     </>
   );
 };
