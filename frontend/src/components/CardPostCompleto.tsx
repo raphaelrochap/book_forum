@@ -235,8 +235,7 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                         <Text fontWeight={"bold"}>{commentUser.name}:</Text>
                         <Text>{comentario.description}</Text>
                         <Spacer />
-                        {(user?.id == commentUser.id ||
-                          post?.user_id?.id == user?.id) && (
+                        {(user?.id == commentUser.id) && (
                           <Tooltip
                             label="Editar comentário"
                             placement="top"
