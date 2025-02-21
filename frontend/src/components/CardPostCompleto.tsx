@@ -10,6 +10,7 @@ import {
   FormHelperText,
   FormLabel,
   HStack,
+  Image,
   Input,
   Spacer,
   Text,
@@ -20,59 +21,65 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaEdit, FaHeart, FaHeartBroken, FaRegEye, FaTrashAlt } from "react-icons/fa";
+import {
+  FaEdit,
+  FaHeart,
+  FaHeartBroken,
+  FaRegEye,
+  FaTrashAlt,
+} from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import ModalComentario from "@/components/ModalComentario";
 import ModalPost from "./ModalPost";
 
 interface CardPostCompletoProps {
   post: Post;
-  refresh: () => void
+  refresh: () => void;
 }
 
 const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
-  const router = useRouter()
-  const modalPatchDisclosure = useDisclosure()
+  const router = useRouter();
+  const modalPatchDisclosure = useDisclosure();
   const [comentarios, setComentarios] = useState<Comment[]>([]);
-  const [description, setDescription] = useState<string>('');
-  const [comment, setComment] = useState<Comment>({ description: '' });
-  const { bearerToken, user } = useBookForumStore()
+  const [description, setDescription] = useState<string>("");
+  const [comment, setComment] = useState<Comment>({ description: "" });
+  const { bearerToken, user } = useBookForumStore();
   const modalEditComentarioDisclosure = useDisclosure();
-  
+
   const PostComment = async () => {
     const newComment: Comment = {
       user_id: user?.id,
       post_id: post.id,
-      description
-    }
-    if (!bearerToken) return
-    await api(bearerToken).post('comments', newComment);
-    setDescription('')
-    refresh()
+      description,
+    };
+    if (!bearerToken) return;
+    await api(bearerToken).post("comments", newComment);
+    setDescription("");
+    refresh();
   };
 
   const PatchLike = async () => {
-    if (!bearerToken) return
+    if (!bearerToken) return;
     await api(bearerToken).patch(`posts/like/${post.id}`);
-    refresh()
+    refresh();
   };
 
   const PatchDislike = async () => {
-    if (!bearerToken) return
+    if (!bearerToken) return;
     await api(bearerToken).patch(`posts/dislike/${post.id}`);
-    refresh()
+    refresh();
   };
 
   const removePost = async () => {
-    if (!bearerToken) return
-    await api(bearerToken).delete(`posts/${post.id}`)
-    router.push('/')
+    if (!bearerToken) return;
+    await api(bearerToken).delete(`posts/${post.id}`);
+    router.push("/");
   };
 
   const removeComment = async (id_comment: number) => {
-    if (!bearerToken) return
-    await api(bearerToken).delete(`comments/${id_comment}`)
-    refresh()
+    if (!bearerToken) return;
+    await api(bearerToken).delete(`comments/${id_comment}`);
+    refresh();
   };
 
   const getLikedVotedColor = (): string => {
@@ -81,17 +88,18 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
   };
 
   const getDislikedVotedColor = (): string => {
-    if (post.disliked_by?.find((id) => id === user?.id))
-      return "red";
+    if (post.disliked_by?.find((id) => id === user?.id)) return "red";
     return "";
   };
 
   const getComentarios = async () => {
-    if (!bearerToken) return
-    const response = await api(bearerToken).get(`/comments/byPostId/${post.id}`);
+    if (!bearerToken) return;
+    const response = await api(bearerToken).get(
+      `/comments/byPostId/${post.id}`
+    );
 
     if (response.status == 200) setComentarios(response.data);
-  }
+  };
 
   useEffect(() => {
     getComentarios();
@@ -101,7 +109,7 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
     <>
       <VStack w="full">
         <Box w={{ base: "80%", lg: "50%" }}>
-          <Center bgColor={"blue.200"} rounded={'lg'} p="20px">
+          <Center bgColor={"blue.200"} rounded={"lg"} p="20px">
             <VStack w="full">
               <HStack w="full">
                 <VStack w="full">
@@ -110,17 +118,24 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                     textAlign={"center"}
                     fontSize={"2xl"}
                     fontWeight={"bold"}
-                    mb={'-10px'}
+                    mb={"-10px"}
                   >
                     {post.title}
                   </Text>
-                  <Text w="full"
-                  textAlign={"center"}
-                  fontSize={"md"}
-                  mb={'10px'}
+                  <Text
+                    w="full"
+                    textAlign={"center"}
+                    fontSize={"md"}
+                    mb={"10px"}
                   >
                     Autor: {post?.user_id?.name}
-                  </Text>                  
+                  </Text>
+
+                  <Image
+                    src={post?.image_url}
+                    boxSize="200px"
+                    objectFit="contain"
+                  />
 
                   <Text w="full" textAlign={"left"}>
                     {post.description}
@@ -134,103 +149,161 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                     </HStack>
                     <Spacer />
                     <Button onClick={PatchLike}>
-                      <HStack pr="5px">                      
-                          <FaHeart color={getLikedVotedColor()} />                      
+                      <HStack pr="5px">
+                        <FaHeart color={getLikedVotedColor()} />
                         <Text whiteSpace={"nowrap"} fontSize={"xs"} pr={0}>
                           {post.likes}
                         </Text>
                       </HStack>
                     </Button>
                     <Button onClick={PatchDislike}>
-                      <HStack pr="5px">                      
+                      <HStack pr="5px">
                         <FaHeartBroken color={getDislikedVotedColor()} />
                         <Text whiteSpace={"nowrap"} fontSize={"xs"}>
                           {post.dislikes}
-                        </Text>                      
-                      </HStack>                      
+                        </Text>
+                      </HStack>
                     </Button>
-                    {user?.id == post?.user_id?.id &&
-                    <Tooltip label='Editar post' placement="top" hasArrow>
-                      <Button onClick={modalPatchDisclosure.onOpen} variant={'ghost'} colorScheme="red">
-                        <HStack pr="5px">                      
-                          <FaEdit />                        
-                        </HStack>                                              
-                      </Button>
-                    </Tooltip>
-                    }
-                    {user?.id == post?.user_id?.id &&
-                    <Tooltip label='Deletar post' placement="top" hasArrow>
-                      <Button onClick={removePost} variant={'ghost'} colorScheme="red">
-                        <HStack pr="5px">                      
-                          <FaTrashAlt />                        
-                        </HStack>                                              
-                      </Button>
-                    </Tooltip>
-                    }
+                    {user?.id == post?.user_id?.id && (
+                      <Tooltip label="Editar post" placement="top" hasArrow>
+                        <Button
+                          onClick={modalPatchDisclosure.onOpen}
+                          variant={"ghost"}
+                          colorScheme="red"
+                        >
+                          <HStack pr="5px">
+                            <FaEdit />
+                          </HStack>
+                        </Button>
+                      </Tooltip>
+                    )}
+                    {user?.id == post?.user_id?.id && (
+                      <Tooltip label="Deletar post" placement="top" hasArrow>
+                        <Button
+                          onClick={removePost}
+                          variant={"ghost"}
+                          colorScheme="red"
+                        >
+                          <HStack pr="5px">
+                            <FaTrashAlt />
+                          </HStack>
+                        </Button>
+                      </Tooltip>
+                    )}
                   </HStack>
                 </VStack>
               </HStack>
             </VStack>
           </Center>
-          <HStack my='10px'>
+          <HStack my="10px">
             <Text fontWeight={"bold"}>Comentários</Text>
             <Badge colorScheme="green">{comentarios.length}</Badge>
           </HStack>
-          <VStack w='full' mb='20px'>
+          <VStack w="full" mb="20px">
             <FormControl w={{ base: "80%", lg: "90%" }}>
               <HStack>
-              <Textarea value={description} onChange={(e) => { setDescription(e.target.value) }}/>
-              <Button disabled={!description} onClick={PostComment} variant='ghost' colorScheme="blue"><IoSend /></Button>
+                <Textarea
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                  }}
+                />
+                <Button
+                  disabled={!description}
+                  onClick={PostComment}
+                  variant="ghost"
+                  colorScheme="blue"
+                >
+                  <IoSend />
+                </Button>
               </HStack>
             </FormControl>
           </VStack>
           <VStack w="full">
             {comentarios.map((comentario) => {
-              const commentUser: User = comentario?.user_id as User
-            return (
-              <VStack key={post.id} textAlign={'left'} bgColor={"blue.200"} w={{ base: "80%", lg: "90%" }} rounded={'md'} p='10px 15px'>
-                <HStack w='full'>
-                  {!comentario.removed ?
-                    <>
-                      <Text fontWeight={'bold'}>{commentUser.name}:</Text>
-                      <Text>{comentario.description}</Text>
-                      <Spacer />
-                      {((user?.id == commentUser.id) || (post?.user_id?.id == user?.id)) &&
-                        <Tooltip label='Editar comentário' placement="top" hasArrow>                      
-                          <Button onClick={() => {
-                            setComment(comentario)
-                            modalEditComentarioDisclosure.onOpen()
-                          }} variant={'ghost'} colorScheme="red">
-                            <HStack pr="5px">                      
-                              <FaEdit />                        
-                            </HStack>                                              
-                          </Button>
-                        </Tooltip>
-                      }
-                      {((user?.id == commentUser.id) || (post?.user_id?.id == user?.id)) &&
-                        <Tooltip label='Excluir comentário' placement="top" hasArrow>                      
-                          <Button onClick={() => {removeComment(Number(comentario?.id))}} variant={'ghost'} colorScheme="red">
-                            <HStack pr="5px">                      
-                              <FaTrashAlt />                        
-                            </HStack>                                              
-                          </Button>
-                        </Tooltip>
-                      }
-                    </>
-                    :
-                    <>
-                      <Text as='i' fontWeight={'thin'}>Comentario removido</Text>
-                    </>
-                  }
-                </HStack>
-              </VStack>
-            )})}            
+              const commentUser: User = comentario?.user_id as User;
+              return (
+                <VStack
+                  key={post.id}
+                  textAlign={"left"}
+                  bgColor={"blue.200"}
+                  w={{ base: "80%", lg: "90%" }}
+                  rounded={"md"}
+                  p="10px 15px"
+                >
+                  <HStack w="full">
+                    {!comentario.removed ? (
+                      <>
+                        <Text fontWeight={"bold"}>{commentUser.name}:</Text>
+                        <Text>{comentario.description}</Text>
+                        <Spacer />
+                        {(user?.id == commentUser.id ||
+                          post?.user_id?.id == user?.id) && (
+                          <Tooltip
+                            label="Editar comentário"
+                            placement="top"
+                            hasArrow
+                          >
+                            <Button
+                              onClick={() => {
+                                setComment(comentario);
+                                modalEditComentarioDisclosure.onOpen();
+                              }}
+                              variant={"ghost"}
+                              colorScheme="red"
+                            >
+                              <HStack pr="5px">
+                                <FaEdit />
+                              </HStack>
+                            </Button>
+                          </Tooltip>
+                        )}
+                        {(user?.id == commentUser.id ||
+                          post?.user_id?.id == user?.id) && (
+                          <Tooltip
+                            label="Excluir comentário"
+                            placement="top"
+                            hasArrow
+                          >
+                            <Button
+                              onClick={() => {
+                                removeComment(Number(comentario?.id));
+                              }}
+                              variant={"ghost"}
+                              colorScheme="red"
+                            >
+                              <HStack pr="5px">
+                                <FaTrashAlt />
+                              </HStack>
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Text as="i" fontWeight={"thin"}>
+                          Comentario removido
+                        </Text>
+                      </>
+                    )}
+                  </HStack>
+                </VStack>
+              );
+            })}
           </VStack>
         </Box>
       </VStack>
 
-      <ModalComentario disclosureProps={modalEditComentarioDisclosure} refresh={getComentarios} comment={comment}/>
-      <ModalPost disclosureProps={modalPatchDisclosure} post={post} refresh={refresh}/>
+      <ModalComentario
+        disclosureProps={modalEditComentarioDisclosure}
+        refresh={getComentarios}
+        comment={comment}
+      />
+      <ModalPost
+        disclosureProps={modalPatchDisclosure}
+        post={post}
+        refresh={refresh}
+      />
     </>
   );
 };
