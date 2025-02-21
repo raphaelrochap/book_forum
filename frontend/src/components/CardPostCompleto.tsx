@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { FaEdit, FaHeart, FaHeartBroken, FaRegEye, FaTrashAlt } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import ModalComentario from "@/components/ModalComentario";
+import ModalPost from "./ModalPost";
 
 interface CardPostCompletoProps {
   post: Post;
@@ -31,6 +32,7 @@ interface CardPostCompletoProps {
 
 const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
   const router = useRouter()
+  const modalPatchDisclosure = useDisclosure()
   const [comentarios, setComentarios] = useState<Comment[]>([]);
   const [description, setDescription] = useState<string>('');
   const [comment, setComment] = useState<Comment>({ description: '' });
@@ -148,6 +150,15 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
                       </HStack>                      
                     </Button>
                     {user?.id == post?.user_id?.id &&
+                    <Tooltip label='Editar post' placement="top" hasArrow>
+                      <Button onClick={modalPatchDisclosure.onOpen} variant={'ghost'} colorScheme="red">
+                        <HStack pr="5px">                      
+                          <FaEdit />                        
+                        </HStack>                                              
+                      </Button>
+                    </Tooltip>
+                    }
+                    {user?.id == post?.user_id?.id &&
                     <Tooltip label='Deletar post' placement="top" hasArrow>
                       <Button onClick={removePost} variant={'ghost'} colorScheme="red">
                         <HStack pr="5px">                      
@@ -219,6 +230,7 @@ const CardPostCompleto = ({ post, refresh }: CardPostCompletoProps) => {
       </VStack>
 
       <ModalComentario disclosureProps={modalEditComentarioDisclosure} refresh={getComentarios} comment={comment}/>
+      <ModalPost disclosureProps={modalPatchDisclosure} post={post} refresh={refresh}/>
     </>
   );
 };

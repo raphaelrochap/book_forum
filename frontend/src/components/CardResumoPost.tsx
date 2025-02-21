@@ -1,12 +1,13 @@
 import { Post } from "@/types/entities";
-import { Box, Center, HStack, Spacer, Text, VStack } from "@chakra-ui/react";
+import { Box, Center, HStack, Spacer, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { FaHeart, FaHeartBroken, FaRegEye } from "react-icons/fa";
+import ModalPost from "./ModalPost";
 
 interface CardResumoPostProps {
   post: Post
 }
 
-const CardResumoPost = ({post }: CardResumoPostProps) => {
+const CardResumoPost = ({ post }: CardResumoPostProps) => {
   return (
     <>
       <Box

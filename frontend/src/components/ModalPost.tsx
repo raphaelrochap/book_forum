@@ -1,5 +1,6 @@
 import { api } from "@/api/api"
 import useBookForumStore from "@/store/store"
+import { Post } from "@/types/entities"
 import {
     Button,
     Modal,
@@ -19,25 +20,30 @@ import {
     FormLabel,
     Textarea,
   } from "@chakra-ui/react"
-import { desc } from "framer-motion/client"
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
   
   interface ModalPostProps {
     disclosureProps: UseDisclosureProps
+    insert?: boolean
+    post?: Post
     refresh: () => void
   }
   
-  const ModalPost = ({ disclosureProps, refresh }: ModalPostProps) => {  
+  const ModalPost = ({ disclosureProps, insert = false, post, refresh }: ModalPostProps) => {  
     const [title, setTitle] = useState<string>('')
     const [description, setDescription] = useState<string>('')
     const { bearerToken } = useBookForumStore()
 
-    const handlePublicar = async (e: FormEvent<HTMLFormElement>) => {      
+    const handlePublicarEditar = async (e: FormEvent<HTMLFormElement>) => {      
       e.preventDefault()
       const payload = { title, description }
-      const response = await api(bearerToken).post('posts', payload)
+      let response = undefined
+      if(insert)
+        response = await api(bearerToken).post('posts', payload)
+      else
+        response = await api(bearerToken).patch(`posts/${post?.id}`, payload)
 
-      if (response.status == 201)
+      if (response.status == 201 || response.status == 200)
       {
         setTitle('')
         setDescription('')
@@ -47,13 +53,20 @@ import { FormEvent, useState } from "react"
       }      
     }
 
+    useEffect(() => {
+      if(post){
+        setTitle(String(post?.title))
+        setDescription(String(post?.description))
+      }        
+    }, [post])
+
     return (
       <>
         <Modal isOpen={disclosureProps.isOpen as boolean} onClose={disclosureProps.onClose as () =>  void} closeOnOverlayClick={false} size='2xl'>
           <ModalOverlay />
           <ModalContent>
-            <form onSubmit={handlePublicar}>
-              <ModalHeader>Criar uma nova publicação</ModalHeader>
+            <form onSubmit={handlePublicarEditar}>
+              <ModalHeader>{insert ? 'Criar' : 'Editar'} uma nova publicação</ModalHeader>
               <ModalBody>              
                   <FormControl w='full'>
                       <FormLabel>Título</FormLabel>
@@ -68,7 +81,7 @@ import { FormEvent, useState } from "react"
                 <HStack w='full'>
                   <Button onClick={disclosureProps.onClose}>Cancelar</Button>
                   <Spacer />
-                  <Button type="submit" colorScheme="blue">Publicar</Button>
+                  <Button type="submit" colorScheme="blue">{insert ? 'Publicar' : 'Editar publicação'}</Button>
               </HStack>
               </ModalFooter>
             </form>

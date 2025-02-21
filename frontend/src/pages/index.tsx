@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 const Home = () => {
   const [posts, setPosts] = useState<Post[]>([])
   const router = useRouter()
-  const modalPostDisclosure = useDisclosure();
+  const modalPostDisclosure = useDisclosure()
   const { bearerToken } = useBookForumStore()
 
   const SessionCheck = () => {
@@ -55,7 +55,7 @@ const Home = () => {
         </Center>
       </Layout>
 
-      <ModalPost disclosureProps={modalPostDisclosure} refresh={getPosts} />
+      <ModalPost disclosureProps={modalPostDisclosure} refresh={getPosts} insert/>
     </>
   );
 }
