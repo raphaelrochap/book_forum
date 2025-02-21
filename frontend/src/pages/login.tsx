@@ -61,7 +61,7 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <FormControl isRequired>
               <FormLabel textAlign={'center'}>Email</FormLabel>
-              <Input value={email} onChange={(e) => { setEmail(e.target.value) }} size={'lg'} />
+              <Input type="email" value={email} onChange={(e) => { setEmail(e.target.value) }} size={'lg'} />
             </FormControl>
 
             <FormControl isRequired>

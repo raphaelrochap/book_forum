@@ -69,7 +69,7 @@ import { FormEvent, useEffect, useState } from "react"
             <form onSubmit={handlePublicarEditar}>
               <ModalHeader>{insert ? 'Criar' : 'Editar'} uma nova publicação</ModalHeader>
               <ModalBody>              
-                  <FormControl w='full'>
+                  <FormControl w='full' isRequired>
                       <FormLabel>Título</FormLabel>
                       <Input value={title} onChange={(e) => { setTitle(e.target.value) }}/>
                   </FormControl>
@@ -77,7 +77,7 @@ import { FormEvent, useEffect, useState } from "react"
                       <FormLabel pt='10px'>Url da imagem</FormLabel>
                       <Input value={image_url} onChange={(e) => { setImageUrl(e.target.value) }}/>
                   </FormControl>
-                  <FormControl w='full'>
+                  <FormControl w='full' isRequired>
                       <FormLabel pt='10px'>Descrição</FormLabel>
                       <Textarea value={description} onChange={(e) => { setDescription(e.target.value) }}/>
                   </FormControl>              
