@@ -11,7 +11,7 @@ export class CommentEntity {
     @JoinColumn()
     user_id: UserEntity;
 
-    @ManyToOne(() => PostEntity)
+    @ManyToOne(() => PostEntity, { onDelete: "CASCADE" })
     @JoinColumn()
     post_id: PostEntity;
 
